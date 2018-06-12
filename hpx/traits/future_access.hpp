@@ -8,6 +8,7 @@
 
 #include <hpx/config.hpp>
 #include <hpx/traits/future_traits.hpp>
+#include <hpx/util/optional.hpp>
 
 #include <boost/intrusive_ptr.hpp>
 
@@ -157,6 +158,13 @@ namespace hpx { namespace traits
                 boost::intrusive_ptr<SharedState>(shared_state));
         }
 
+        template <typename ... Ts>
+        static lcos::future<R>
+        create_inplace(Ts &&... ts)
+        {
+            return lcos::future<R>(util::in_place, std::forward<Ts>(ts)...);
+        }
+
         HPX_FORCEINLINE static
         typename traits::detail::shared_state_ptr<R>::type const&
         get_shared_state(lcos::future<R> const& f)
@@ -212,6 +220,13 @@ namespace hpx { namespace traits
         {
             return lcos::shared_future<R>(
                 boost::intrusive_ptr<SharedState>(shared_state));
+        }
+
+        template <typename ... Ts>
+        static lcos::shared_future<R>
+        create_inplace(Ts &&... ts)
+        {
+            return lcos::future<R>(util::in_place, std::forward<Ts>(ts)...);
         }
 
         HPX_FORCEINLINE static

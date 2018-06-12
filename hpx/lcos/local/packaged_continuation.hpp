@@ -678,8 +678,21 @@ namespace hpx { namespace lcos { namespace detail
     then_execute_helper(Executor && exec, F && f, Future && predecessor)
     {
         // simply forward this to executor
-        return parallel::execution::then_execute(exec, std::forward<F>(f),
-            predecessor);
+        return parallel::execution::then_execute(
+            std::forward<Executor>(exec), std::forward<F>(f), predecessor);
+    }
+
+    template <typename Executor, typename F, typename Future>
+    inline hpx::future<
+        typename hpx::util::detail::invoke_deferred_result<
+            F, Future
+        >::type>
+    sync_execute_helper(Executor && exec, F && f, Future && fut)
+    {
+        // simply forward this to executor
+        HPX_ASSERT(fut.is_ready());
+        return parallel::execution::sync_execute(
+            std::forward<Executor>(exec), std::forward<F>(f), fut.get());
     }
 }}}
 
